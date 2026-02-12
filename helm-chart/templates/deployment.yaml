@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-deployment
+  name: {{ .Values.image.containerName }}-deployment
 spec:
   strategy:
     type: RollingUpdate
@@ -13,34 +13,15 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}
+      app: {{ .Values.image.containerName }}
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}
+        app: {{ .Values.image.containerName }}
     spec:
       containers:
-      - name: {{ .Chart.Name }}-container
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag  }}"
+      - name: {{ .Values.image.containerName }}-container
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.image.containerPort }}
-        readinessProbe:
-          httpGet:
-            path: /customer/ping          # Endpoint to check for readiness (adjust according to your app)
-            port: 8080
-          initialDelaySeconds: 20    # Wait 20 seconds before the first probe
-          periodSeconds: 5         # Probe every 5 seconds
-          timeoutSeconds: 2         # Timeout if the probe takes longer than 2 seconds
-          failureThreshold: 3       # Mark the Pod as not ready after 3 consecutive failures        
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Chart.Name }}-service
-spec:
-  type: ClusterIP
-  ports:
-  - port: {{ .Values.image.containerPort }}
-  selector:
-    app: {{ .Chart.Name }}

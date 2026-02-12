@@ -1,16 +1,18 @@
-
-# Default values for customer.
+# Default values for HPM Project.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 2
 
 image:
-  repository: 229531317213.dkr.ecr.us-east-2.amazonaws.com/customer
+  repository: 748359026239.dkr.ecr.us-east-1.amazonaws.com/customer
   pullPolicy: Always
   containerPort: 8080
+  containerName: packersmovers-app
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+
+ingress:
+  enabled: false
 
 
 
